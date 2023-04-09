@@ -1,5 +1,8 @@
 # pagecache
 
+[![Go Documentation](https://godocs.io/git.sr.ht/~jamesponddotco/pagecache-go?status.svg)](https://godocs.io/git.sr.ht/~jamesponddotco/pagecache-go)
+[![Go Report Card](https://goreportcard.com/badge/git.sr.ht/~jamesponddotco/pagecache-go)](https://goreportcard.com/report/git.sr.ht/~jamesponddotco/pagecache-go)
+
 Package `pagecache` provides a stable interface and helpers for caching HTTP responses.
 
 ## Features
