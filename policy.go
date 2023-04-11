@@ -2,9 +2,10 @@ package pagecache
 
 import (
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
+
+	"git.sr.ht/~jamesponddotco/pagecache-go/internal/httputil"
+	"git.sr.ht/~jamesponddotco/pagecache-go/internal/sliceutil"
 )
 
 const (
@@ -86,36 +87,28 @@ func DefaultPolicy() *Policy {
 //
 // Returns true if the request and response should be cached, otherwise false.
 func (p *Policy) IsCacheable(resp *http.Response) bool {
-	// Check if the status code is allowed
-	if !p.IsStatusCodeAllowed(resp.StatusCode) {
+	if !sliceutil.MatchInt(p.AllowedStatusCodes, resp.StatusCode) {
 		return false
 	}
 
-	// Check if the method is allowed
-	if !p.IsMethodAllowed(resp.Request.Method) {
+	if !sliceutil.MatchString(p.AllowedMethods, resp.Request.Method) {
 		return false
 	}
 
-	// Check if any headers are excluded
 	for header := range resp.Header {
-		if p.IsHeaderExcluded(header) {
+		if sliceutil.MatchString(p.ExcludedHeaders, header) {
 			return false
 		}
 	}
 
-	// Check if any cookies are excluded
 	for _, cookie := range resp.Cookies() {
-		if p.IsCookieExcluded(cookie.Name) {
+		if sliceutil.MatchString(p.ExcludedCookies, cookie.Name) {
 			return false
 		}
 	}
 
-	// Check if the response body size exceeds the maximum allowed size
-	if p.MaxBodySize > 0 {
-		contentLength, err := strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 64)
-		if err == nil && contentLength > p.MaxBodySize {
-			return false
-		}
+	if !httputil.IsBodySizeWithinLimit(resp.Header, p.MaxBodySize) {
+		return false
 	}
 
 	// Check if the request URL matches any rules
@@ -146,85 +139,16 @@ func (p *Policy) IsCacheable(resp *http.Response) bool {
 	return true
 }
 
-// IsStatusCodeAllowed checks if the given HTTP status code is allowed
-// for caching according to the policy.
-//
-// Returns true if the status code is allowed, otherwise false.
-func (p *Policy) IsStatusCodeAllowed(statusCode int) bool {
-	for _, code := range p.AllowedStatusCodes {
-		if code == statusCode {
-			return true
-		}
-	}
-
-	return false
-}
-
-// IsMethodAllowed checks if the given HTTP method is allowed
-// for caching according to the policy.
-//
-// Returns true if the method is allowed, otherwise false.
-func (p *Policy) IsMethodAllowed(method string) bool {
-	for _, m := range p.AllowedMethods {
-		if m == method {
-			return true
-		}
-	}
-
-	return false
-}
-
-// IsHeaderExcluded checks if the given HTTP header is excluded from
-// caching according to the policy.
-//
-// Returns true if the header is excluded, otherwise false.
-func (p *Policy) IsHeaderExcluded(header string) bool {
-	for _, h := range p.ExcludedHeaders {
-		if h == header {
-			return true
-		}
-	}
-
-	return false
-}
-
-// IsCookieExcluded checks if the given HTTP cookie is excluded from
-// caching according to the policy.
-//
-// Returns true if the cookie is excluded, otherwise false.
-func (p *Policy) IsCookieExcluded(cookie string) bool {
-	for _, c := range p.ExcludedCookies {
-		if c == cookie {
-			return true
-		}
-	}
-
-	return false
-}
-
 // TTL returns the time-to-live (TTL) for the given response according to the
 // policy. If the policy is configured to use the Cache-Control header and the
 // header contains a valid max-age directive, the TTL will be based on that value.
 // Otherwise, the policy's default TTL will be used.
 func (p *Policy) TTL(resp *http.Response) time.Duration {
 	if p.UseCacheControl {
-		cacheControl := resp.Header.Get("Cache-Control")
+		maxAge := httputil.MaxAge(resp.Header)
 
-		if strings.Contains(cacheControl, "max-age") {
-			parts := strings.Split(cacheControl, ",")
-
-			for _, part := range parts {
-				part = strings.TrimSpace(part)
-
-				if strings.HasPrefix(part, "max-age") {
-					ageStr := strings.TrimPrefix(part, "max-age=")
-
-					maxAge, err := strconv.Atoi(ageStr)
-					if err == nil {
-						return time.Duration(maxAge) * time.Second
-					}
-				}
-			}
+		if maxAge != -1 {
+			return time.Duration(maxAge) * time.Second
 		}
 	}
 

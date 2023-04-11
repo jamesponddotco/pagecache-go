@@ -91,7 +91,7 @@ enable = [
     ]
 
   [linters-settings.gocyclo]
-    min-complexity = 18
+    min-complexity = 15
 
   [linters-settings.gofumpt]
     extra-rules = true
@@ -310,6 +310,7 @@ max-same-issues = 0
       "bodyclose",
       "containedctx",
       "contextcheck",
+      'dupl',
       "errcheck",
       "funlen",
       "goerr113",

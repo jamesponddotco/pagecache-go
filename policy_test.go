@@ -291,51 +291,6 @@ func TestPolicy_TTL(t *testing.T) {
 	}
 }
 
-func TestPolicy_IsCookieExcluded(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name           string
-		policy         *pagecache.Policy
-		cookie         string
-		expectedResult bool
-	}{
-		{
-			name: "IsCookieExcluded with excluded cookie",
-			policy: func() *pagecache.Policy {
-				p := pagecache.DefaultPolicy()
-				p.ExcludedCookies = []string{"sessionid", "auth_token"}
-				return p
-			}(),
-			cookie:         "sessionid",
-			expectedResult: true,
-		},
-		{
-			name: "IsCookieExcluded with non-excluded cookie",
-			policy: func() *pagecache.Policy {
-				p := pagecache.DefaultPolicy()
-				p.ExcludedCookies = []string{"sessionid", "auth_token"}
-				return p
-			}(),
-			cookie:         "user_preferences",
-			expectedResult: false,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			result := tt.policy.IsCookieExcluded(tt.cookie)
-			if result != tt.expectedResult {
-				t.Errorf("Expected IsCookieExcluded: %v, got: %v", tt.expectedResult, result)
-			}
-		})
-	}
-}
-
 func parseTestURL(t *testing.T, urlStr string) *url.URL {
 	t.Helper()
 
