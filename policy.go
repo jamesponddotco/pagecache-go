@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"git.sr.ht/~jamesponddotco/pagecache-go/internal/httputil"
-	"git.sr.ht/~jamesponddotco/pagecache-go/internal/sliceutil"
 )
 
 const (
@@ -19,16 +18,16 @@ const (
 // Policy defines under which conditions an HTTP response may be cached.
 type Policy struct {
 	// AllowedStatusCodes is a list of HTTP status codes that should be cached.
-	AllowedStatusCodes []int
+	AllowedStatusCodes map[int]struct{}
 
 	// AllowedMethods is a list of HTTP methods that should be cached.
-	AllowedMethods []string
+	AllowedMethods map[string]struct{}
 
 	// ExcludedHeaders is a list of HTTP headers to exclude from caching.
-	ExcludedHeaders []string
+	ExcludedHeaders map[string]struct{}
 
 	// ExcludedCookies is a list of HTTP cookies to exclude from caching.
-	ExcludedCookies []string
+	ExcludedCookies map[string]struct{}
 
 	// Rules is a list of rules to apply to a request in order to determine if it should be cached.
 	Rules []*Rule
@@ -52,28 +51,28 @@ type Policy struct {
 // DefaultPolicy returns a new *Policy with opinionated but sane defaults.
 func DefaultPolicy() *Policy {
 	return &Policy{
-		AllowedStatusCodes: []int{
-			http.StatusOK,
-			http.StatusNonAuthoritativeInfo,
-			http.StatusNoContent,
-			http.StatusPartialContent,
-			http.StatusMultipleChoices,
-			http.StatusMovedPermanently,
-			http.StatusFound,
-			http.StatusMethodNotAllowed,
-			http.StatusGone,
-			http.StatusRequestURITooLong,
-			http.StatusNotImplemented,
+		AllowedStatusCodes: map[int]struct{}{
+			http.StatusOK:                   {},
+			http.StatusNonAuthoritativeInfo: {},
+			http.StatusNoContent:            {},
+			http.StatusPartialContent:       {},
+			http.StatusMultipleChoices:      {},
+			http.StatusMovedPermanently:     {},
+			http.StatusFound:                {},
+			http.StatusMethodNotAllowed:     {},
+			http.StatusGone:                 {},
+			http.StatusRequestURITooLong:    {},
+			http.StatusNotImplemented:       {},
 		},
-		AllowedMethods: []string{
-			http.MethodGet,
-			http.MethodHead,
+		AllowedMethods: map[string]struct{}{
+			http.MethodGet:  {},
+			http.MethodHead: {},
 		},
-		ExcludedHeaders: []string{
-			"Authorization",
+		ExcludedHeaders: map[string]struct{}{
+			"Authorization": {},
 		},
-		ExcludedCookies: []string{
-			"sessionid",
+		ExcludedCookies: map[string]struct{}{
+			"sessionid": {},
 		},
 		Rules:           []*Rule{},
 		MaxBodySize:     DefaultMaxBodySize,
@@ -87,22 +86,22 @@ func DefaultPolicy() *Policy {
 //
 // Returns true if the request and response should be cached, otherwise false.
 func (p *Policy) IsCacheable(resp *http.Response) bool {
-	if !sliceutil.ContainsInt(p.AllowedStatusCodes, resp.StatusCode) {
+	if _, ok := p.AllowedStatusCodes[resp.StatusCode]; !ok {
 		return false
 	}
 
-	if !sliceutil.ContainsString(p.AllowedMethods, resp.Request.Method) {
+	if _, ok := p.AllowedMethods[resp.Request.Method]; !ok {
 		return false
 	}
 
 	for header := range resp.Header {
-		if sliceutil.ContainsString(p.ExcludedHeaders, header) {
+		if _, ok := p.ExcludedHeaders[header]; ok {
 			return false
 		}
 	}
 
 	for _, cookie := range resp.Cookies() {
-		if sliceutil.ContainsString(p.ExcludedCookies, cookie.Name) {
+		if _, ok := p.ExcludedCookies[cookie.Name]; ok {
 			return false
 		}
 	}

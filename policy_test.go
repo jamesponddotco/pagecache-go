@@ -64,7 +64,7 @@ func TestPolicy_IsCacheable(t *testing.T) {
 			name: "IsCacheable with excluded header",
 			policy: func() *pagecache.Policy {
 				p := pagecache.DefaultPolicy()
-				p.ExcludedHeaders = append(p.ExcludedHeaders, "X-Custom")
+				p.ExcludedHeaders["X-Custom"] = struct{}{}
 				return p
 			}(),
 			response: &http.Response{
@@ -83,7 +83,7 @@ func TestPolicy_IsCacheable(t *testing.T) {
 			name: "IsCacheable with excluded cookie",
 			policy: func() *pagecache.Policy {
 				p := pagecache.DefaultPolicy()
-				p.ExcludedCookies = append(p.ExcludedCookies, "testcookie")
+				p.ExcludedCookies["testcookie"] = struct{}{}
 				return p
 			}(),
 			response: &http.Response{
