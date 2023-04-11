@@ -2,6 +2,7 @@
 image: 'archlinux'
 packages:
   - 'go'
+  - 'make'
 sources:
   - https://git.sr.ht/~jamesponddotco/pagecache-go
 environment:
@@ -9,10 +10,13 @@ environment:
 tasks:
   - setup: |
       cd pagecache-go
+      export "{HOME}/go/bin:{PATH}"
       make init
   - lint: |
       cd pagecache-go
+      export "{HOME}/go/bin:{PATH}"
       make lint
   - test: |
       cd pagecache-go
+      export "{HOME}/go/bin:{PATH}"
       make test
