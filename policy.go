@@ -87,22 +87,22 @@ func DefaultPolicy() *Policy {
 //
 // Returns true if the request and response should be cached, otherwise false.
 func (p *Policy) IsCacheable(resp *http.Response) bool {
-	if !sliceutil.MatchInt(p.AllowedStatusCodes, resp.StatusCode) {
+	if !sliceutil.ContainsInt(p.AllowedStatusCodes, resp.StatusCode) {
 		return false
 	}
 
-	if !sliceutil.MatchString(p.AllowedMethods, resp.Request.Method) {
+	if !sliceutil.ContainsString(p.AllowedMethods, resp.Request.Method) {
 		return false
 	}
 
 	for header := range resp.Header {
-		if sliceutil.MatchString(p.ExcludedHeaders, header) {
+		if sliceutil.ContainsString(p.ExcludedHeaders, header) {
 			return false
 		}
 	}
 
 	for _, cookie := range resp.Cookies() {
-		if sliceutil.MatchString(p.ExcludedCookies, cookie.Name) {
+		if sliceutil.ContainsString(p.ExcludedCookies, cookie.Name) {
 			return false
 		}
 	}

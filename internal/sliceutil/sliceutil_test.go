@@ -6,7 +6,7 @@ import (
 	"git.sr.ht/~jamesponddotco/pagecache-go/internal/sliceutil"
 )
 
-func TestMatchString(t *testing.T) {
+func TestContainsString(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -58,14 +58,14 @@ func TestMatchString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if got := sliceutil.MatchString(tt.give.slice, tt.give.s); got != tt.want {
-				t.Errorf("MatchString() = %v, want %v", got, tt.want)
+			if got := sliceutil.ContainsString(tt.give.slice, tt.give.s); got != tt.want {
+				t.Errorf("ContainsString() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestMatchInt(t *testing.T) {
+func TestContainsInt(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
@@ -117,8 +117,8 @@ func TestMatchInt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if got := sliceutil.MatchInt(tt.give.slice, tt.give.i); got != tt.want {
-				t.Errorf("MatchInt() = %v, want %v", got, tt.want)
+			if got := sliceutil.ContainsInt(tt.give.slice, tt.give.i); got != tt.want {
+				t.Errorf("ContainsInt() = %v, want %v", got, tt.want)
 			}
 		})
 	}
