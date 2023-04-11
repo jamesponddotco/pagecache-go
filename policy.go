@@ -18,16 +18,16 @@ const (
 // Policy defines under which conditions an HTTP response may be cached.
 type Policy struct {
 	// AllowedStatusCodes is a list of HTTP status codes that should be cached.
-	AllowedStatusCodes map[int]struct{}
+	AllowedStatusCodes map[int]struct{} //nolint:revive // using int as key for performance
 
 	// AllowedMethods is a list of HTTP methods that should be cached.
-	AllowedMethods map[string]struct{}
+	AllowedMethods map[string]struct{} //nolint:revive // using string as key for performance
 
 	// ExcludedHeaders is a list of HTTP headers to exclude from caching.
-	ExcludedHeaders map[string]struct{}
+	ExcludedHeaders map[string]struct{} //nolint:revive // see above
 
 	// ExcludedCookies is a list of HTTP cookies to exclude from caching.
-	ExcludedCookies map[string]struct{}
+	ExcludedCookies map[string]struct{} //nolint:revive // see above
 
 	// Rules is a list of rules to apply to a request in order to determine if it should be cached.
 	Rules []*Rule
