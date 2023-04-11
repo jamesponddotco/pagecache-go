@@ -1,0 +1,18 @@
+---
+image: 'archlinux'
+packages:
+  - 'go'
+sources:
+  - https://git.sr.ht/~jamesponddotco/pagecache-go
+environment:
+  PATH: "{HOME}/go/bin:{PATH}"
+tasks:
+  - setup: |
+      cd pagecache-go
+      make init
+  - lint: |
+      cd pagecache-go
+      make lint
+  - test: |
+      cd pagecache-go
+      make test
