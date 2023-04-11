@@ -11,12 +11,14 @@ tasks:
   - setup: |
       cd pagecache-go
       export PATH="{HOME}/go/bin:{PATH}"
-      make init
+      go install mvdan.cc/gofumpt@v0.5.0
+      go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
+      go install golang.org/x/vuln/cmd/govulncheck@latest
   - lint: |
       cd pagecache-go
       export PATH="{HOME}/go/bin:{PATH}"
-      make lint
+      golangci-lint run ./...
   - test: |
       cd pagecache-go
       export PATH="{HOME}/go/bin:{PATH}"
-      make test
+      go test -cover -race -vet all ./...
