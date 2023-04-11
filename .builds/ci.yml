@@ -5,20 +5,14 @@ packages:
   - 'make'
 sources:
   - https://git.sr.ht/~jamesponddotco/pagecache-go
-environment:
-  PATH: "{HOME}/go/bin:{PATH}"
 tasks:
   - setup: |
       cd pagecache-go
-      export PATH="{HOME}/go/bin:{PATH}"
-      go install mvdan.cc/gofumpt@v0.5.0
-      go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
-      go install golang.org/x/vuln/cmd/govulncheck@latest
+      export PATH="${HOME}/go/bin:${PATH}"
+      make init
   - lint: |
       cd pagecache-go
-      export PATH="{HOME}/go/bin:{PATH}"
-      golangci-lint run ./...
+      make lint
   - test: |
       cd pagecache-go
-      export PATH="{HOME}/go/bin:{PATH}"
-      go test -cover -race -vet all ./...
+      make test
