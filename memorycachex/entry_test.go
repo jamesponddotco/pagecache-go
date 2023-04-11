@@ -182,11 +182,6 @@ func TestEntry_Access(t *testing.T) {
 func TestEntry_SetSize(t *testing.T) {
 	t.Parallel()
 
-	entry, err := createValidEntry(t)
-	if err != nil {
-		t.Fatalf("Failed to create a new entry: %v", err)
-	}
-
 	tests := []struct {
 		name string
 		size uint64
@@ -210,6 +205,11 @@ func TestEntry_SetSize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			entry, err := createValidEntry(t)
+			if err != nil {
+				t.Fatalf("Failed to create a new entry: %v", err)
+			}
+
 			entry.SetSize(tt.size)
 
 			if entry.Size != tt.size {
@@ -221,11 +221,6 @@ func TestEntry_SetSize(t *testing.T) {
 
 func TestEntry_SetTTL(t *testing.T) {
 	t.Parallel()
-
-	entry, err := createValidEntry(t)
-	if err != nil {
-		t.Fatalf("Failed to create a new entry: %v", err)
-	}
 
 	tests := []struct {
 		name string
@@ -250,6 +245,11 @@ func TestEntry_SetTTL(t *testing.T) {
 
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
+			entry, err := createValidEntry(t)
+			if err != nil {
+				t.Fatalf("Failed to create a new entry: %v", err)
+			}
 
 			entry.SetTTL(tt.ttl)
 			newExpiration := time.Now().Add(tt.ttl)

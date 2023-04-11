@@ -19,7 +19,8 @@ const (
 	ErrUnmarshalResponse xerrors.Error = "failed to unmarshal response"
 )
 
-// Entry represents a single cache entry.
+// Entry represents a single cache entry. Entry is not tread-safe and should be
+// protected by a sync.Mutex.
 type Entry struct {
 	Key        string
 	Expiration time.Time
