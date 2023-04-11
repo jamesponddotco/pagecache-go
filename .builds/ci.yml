@@ -8,10 +8,10 @@ sources:
 tasks:
   - setup: |
       cd pagecache-go
-      export PATH="${HOME}/go/bin:${PATH}"
       make init
   - lint: |
       cd pagecache-go
+      export PATH="${HOME}/go/bin:${PATH}"
       make lint
   - test: |
       cd pagecache-go
