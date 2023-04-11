@@ -327,4 +327,8 @@ max-same-issues = 0
     path = "_test.go"
     text = "fieldalignment"
 
+  [[issues.exclude-rules]]
+    path = "_test.go"
+    text = "nested-structs"
+
 # [1] https://github.com/golangci/golangci-lint/issues/2649

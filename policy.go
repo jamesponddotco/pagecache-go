@@ -139,7 +139,7 @@ func (p *Policy) IsCacheable(resp *http.Response) bool {
 
 	// Check if the TTL is zero or negative
 	ttl := p.TTL(resp)
-	if ttl < 0 {
+	if ttl < 0 { //nolint:gosimple // explicitly checking for negative values to keep consistency
 		return false
 	}
 
