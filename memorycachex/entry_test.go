@@ -60,20 +60,21 @@ func TestNewEntry(t *testing.T) {
 				if err == nil {
 					t.Errorf("Expected error, but got nil")
 				}
-			} else {
-				if err != nil {
-					t.Errorf("Unexpected error: %v", err)
-				}
+				return
+			}
 
-				if entry == nil {
-					t.Errorf("Expected a non-nil entry, but got nil")
-				} else {
-					if entry.Key != tt.key {
-						t.Errorf("Expected key %q, but got %q", tt.key, entry.Key)
-					}
-					if !entry.Expiration.Equal(tt.expiration) {
-						t.Errorf("Expected expiration %v, but got %v", tt.expiration, entry.Expiration)
-					}
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if entry == nil {
+				t.Errorf("Expected a non-nil entry, but got nil")
+			} else {
+				if entry.Key != tt.key {
+					t.Errorf("Expected key %q, but got %q", tt.key, entry.Key)
+				}
+				if !entry.Expiration.Equal(tt.expiration) {
+					t.Errorf("Expected expiration %v, but got %v", tt.expiration, entry.Expiration)
 				}
 			}
 		})
@@ -116,16 +117,17 @@ func TestEntry_Load(t *testing.T) {
 				if err == nil {
 					t.Errorf("Expected error, but got nil")
 				}
-			} else {
-				if err != nil {
-					t.Errorf("Unexpected error: %v", err)
-				}
+				return
+			}
 
-				if resp == nil {
-					t.Errorf("Expected a non-nil response, but got nil")
-				} else if resp.StatusCode != http.StatusOK {
-					t.Errorf("Expected status code %d, but got %d", http.StatusOK, resp.StatusCode)
-				}
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if resp == nil {
+				t.Errorf("Expected a non-nil response, but got nil")
+			} else if resp.StatusCode != http.StatusOK {
+				t.Errorf("Expected status code %d, but got %d", http.StatusOK, resp.StatusCode)
 			}
 		})
 	}
