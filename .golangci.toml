@@ -321,13 +321,15 @@ max-same-issues = 0
 
   [[issues.exclude-rules]]
     path = "_test.go"
-    linters = [
-      "bodyclose"
-    ]
+    linters = ["bodyclose"]
 
   [[issues.exclude-rules]]
     path = "_test.go"
     text = "fieldalignment"
+
+  [[issues.exclude-rules]]
+    path = "_test.go"
+    linters = ["gocognit"]
 
   [[issues.exclude-rules]]
     path = "_test.go"
