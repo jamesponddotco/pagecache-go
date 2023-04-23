@@ -1,7 +1,5 @@
 [run]
-skip-dirs = [
-  ".tmp",
-]
+skip-dirs = [".tmp"]
 skip-dirs-use-default = "false"
 modules-download-mode = "readonly"
 
@@ -10,6 +8,7 @@ go = "1.20"
 [linters]
 disable-all = true
 enable = [
+  "asasalint",
   "asciicheck",
   "bidichk",
   "bodyclose",
@@ -27,8 +26,11 @@ enable = [
   "forbidigo",
   "forcetypeassert",
   "gci",
+  "gocheckcompilerdirectives",
   "gochecknoglobals",
   "gochecknoinits",
+  "gocognit",
+  "goconst",
   "gocritic",
   "gocyclo",
   "godot",
@@ -38,9 +40,11 @@ enable = [
   "gosimple",
   "govet",
   "ineffassign",
+  "interfacebloat",
   "makezero",
   "maintidx",
   "misspell",
+  "nestif",
   "nilerr",
   "nilnil",
   "noctx",
@@ -57,12 +61,12 @@ enable = [
   "testpackage",
   "testableexamples",
   "thelper",
+  "tparallel",
   "typecheck",
   "unconvert",
   "usestdlibvars",
   "unparam",
   "unused",
-  "varnamelen",
   "wastedassign",
   "wrapcheck",
   "wsl"
@@ -147,9 +151,6 @@ enable = [
 
     [[linters-settings.revive.rules]]
       name = "context-keys-type"
-
-    [[linters-settings.revive.rules]]
-      name = "deep-exit"
 
     [[linters-settings.revive.rules]]
       name = "defer"
@@ -307,12 +308,10 @@ max-same-issues = 0
   [[issues.exclude-rules]]
     path = "_test.go"
     linters = [
-      "bodyclose",
       "containedctx",
       "contextcheck",
-      'dupl',
       "errcheck",
-      "funlen",
+      "gochecknoglobals",
       "goerr113",
       "nilerr",
       "noctx",
@@ -322,7 +321,9 @@ max-same-issues = 0
 
   [[issues.exclude-rules]]
     path = "_test.go"
-    text = "deep-exit"
+    linters = [
+      "bodyclose"
+    ]
 
   [[issues.exclude-rules]]
     path = "_test.go"
@@ -331,5 +332,3 @@ max-same-issues = 0
   [[issues.exclude-rules]]
     path = "_test.go"
     text = "nested-structs"
-
-# [1] https://github.com/golangci/golangci-lint/issues/2649
