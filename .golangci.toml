@@ -2,7 +2,6 @@
 skip-dirs = [".tmp"]
 skip-dirs-use-default = "false"
 modules-download-mode = "readonly"
-
 go = "1.20"
 
 [linters]
@@ -308,10 +307,12 @@ max-same-issues = 0
   [[issues.exclude-rules]]
     path = "_test.go"
     linters = [
+      "bodyclose",
       "containedctx",
       "contextcheck",
       "errcheck",
       "gochecknoglobals",
+      "gocognit",
       "goerr113",
       "nilerr",
       "noctx",
@@ -321,15 +322,11 @@ max-same-issues = 0
 
   [[issues.exclude-rules]]
     path = "_test.go"
-    linters = ["bodyclose"]
+    text = "deep-exit"
 
   [[issues.exclude-rules]]
     path = "_test.go"
     text = "fieldalignment"
-
-  [[issues.exclude-rules]]
-    path = "_test.go"
-    linters = ["gocognit"]
 
   [[issues.exclude-rules]]
     path = "_test.go"
