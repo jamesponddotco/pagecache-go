@@ -124,7 +124,7 @@ func (p *Policy) IsCacheable(resp *http.Response) bool {
 	// Check if Cache-Control should be taken into account
 	if p.UseCacheControl {
 		cacheControl := resp.Header.Get("Cache-Control")
-		if cacheControl == "no-store" || cacheControl == "private" {
+		if cacheControl == "no-store" || cacheControl == "no-cache" || cacheControl == "private" {
 			return false
 		}
 	}
