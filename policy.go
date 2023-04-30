@@ -94,23 +94,18 @@ func (p *Policy) IsCacheable(resp *http.Response) bool {
 		return false
 	}
 
-	for header := range resp.Header {
-		if _, ok := p.ExcludedHeaders[header]; ok {
-			return false
-		}
+	if !p.isCacheableHeaders(resp.Header) {
+		return false
 	}
 
-	for _, cookie := range resp.Cookies() {
-		if _, ok := p.ExcludedCookies[cookie.Name]; ok {
-			return false
-		}
+	if !p.isCacheableCookies(resp.Cookies()) {
+		return false
 	}
 
 	if !httputil.IsBodySizeWithinLimit(resp.Header, p.MaxBodySize) {
 		return false
 	}
 
-	// Check if the request URL matches any rules
 	for _, rule := range p.Rules {
 		if rule.Match(resp.Request.URL.String()) {
 			if rule.Behavior == BehaviorExclude {
@@ -121,17 +116,16 @@ func (p *Policy) IsCacheable(resp *http.Response) bool {
 		}
 	}
 
-	// Check if Cache-Control should be taken into account
 	if p.UseCacheControl {
 		cacheControl := resp.Header.Get("Cache-Control")
+
 		if cacheControl == "no-store" || cacheControl == "no-cache" || cacheControl == "private" {
 			return false
 		}
 	}
 
-	// Check if the TTL is zero or negative
 	ttl := p.TTL(resp)
-	if ttl < 0 { //nolint:gosimple // explicitly checking for negative values to keep consistency
+	if ttl < 0 { //nolint:gosimple // Explicitly checking for negative values to keep consistency.
 		return false
 	}
 
@@ -152,4 +146,26 @@ func (p *Policy) TTL(resp *http.Response) time.Duration {
 	}
 
 	return p.DefaultTTL
+}
+
+// isCacheableHeaders checks if the given headers are cacheable according to the policy.
+func (p *Policy) isCacheableHeaders(headers http.Header) bool {
+	for header := range headers {
+		if _, ok := p.ExcludedHeaders[header]; ok {
+			return false
+		}
+	}
+
+	return true
+}
+
+// isCacheableCookies checks if the given cookies are cacheable according to the policy.
+func (p *Policy) isCacheableCookies(cookies []*http.Cookie) bool {
+	for _, cookie := range cookies {
+		if _, ok := p.ExcludedCookies[cookie.Name]; ok {
+			return false
+		}
+	}
+
+	return true
 }
