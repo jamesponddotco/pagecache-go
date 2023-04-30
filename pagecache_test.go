@@ -25,13 +25,13 @@ func TestKey(t *testing.T) {
 			name:      "default cache name and some extras",
 			giveName:  "",
 			giveExtra: []string{"foo", "bar"},
-			want:      "f6d8f49cfe7a4564",
+			want:      "984a302b2754ae67",
 		},
 		{
 			name:      "custom cache name and some extras",
 			giveName:  "foo",
 			giveExtra: []string{"foo", "bar"},
-			want:      "2a844cb7ad71aabc",
+			want:      "e78d179014d38edf",
 		},
 	}
 

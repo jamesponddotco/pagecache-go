@@ -9,6 +9,7 @@ import (
 	"git.sr.ht/~jamesponddotco/recache-go/lrure"
 	"git.sr.ht/~jamesponddotco/xstd-go/xerrors"
 	"git.sr.ht/~jamesponddotco/xstd-go/xhash/xfnv"
+	"git.sr.ht/~jamesponddotco/xstd-go/xnet/xurl"
 )
 
 const (
@@ -59,16 +60,21 @@ func Key(name string, req *http.Request, extra ...string) string {
 		name = DefaultCacheName
 	}
 
+	url, err := xurl.Normalize(req.URL.Redacted())
+	if err != nil {
+		url = req.URL.Redacted()
+	}
+
 	var builder strings.Builder
 
-	builder.Grow(len(name) + len(req.Method) + len(req.URL.Redacted()) + len(extra)*2)
+	builder.Grow(len(name) + len(req.Method) + len(url) + len(extra)*2)
 
 	builder.WriteString("name:")
 	builder.WriteString(name)
 	builder.WriteString(":method:")
 	builder.WriteString(req.Method)
 	builder.WriteString(":url:")
-	builder.WriteString(req.URL.Redacted())
+	builder.WriteString(url)
 
 	if len(extra) > 0 {
 		builder.WriteString(":extra:")
