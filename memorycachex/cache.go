@@ -120,32 +120,24 @@ func (mc *MemoryCache) evict() {
 		return
 	}
 
-	// Check if the cache is full or any entry is expired.
-	var expired []*Entry
+	evictionCandidates := make([]*Entry, 0, len(mc.cache))
 
 	for _, entry := range mc.cache {
-		if entry.IsExpired() {
-			expired = append(expired, entry)
-			continue
-		}
+		evictionCandidates = append(evictionCandidates, entry)
+	}
 
+	// Sort entries based on the Mockingjay cache replacement policy.
+	sort.Slice(evictionCandidates, func(i, j int) bool {
+		return evictionCandidates[i].Frequency < evictionCandidates[j].Frequency
+	})
+
+	// Evict entries until the cache size is below its capacity.
+	for _, entry := range evictionCandidates {
 		if mc.currentSize < mc.capacity {
-			return
+			break
 		}
 
 		mc.currentSize -= entry.Size
 		delete(mc.cache, entry.Key)
-	}
-
-	// Evict entries based on the Mockingjay cache replacement policy.
-	if len(expired) > 0 {
-		sort.Slice(expired, func(i, j int) bool {
-			return expired[i].Frequency < expired[j].Frequency
-		})
-
-		for _, entry := range expired {
-			mc.currentSize -= entry.Size
-			delete(mc.cache, entry.Key)
-		}
 	}
 }
